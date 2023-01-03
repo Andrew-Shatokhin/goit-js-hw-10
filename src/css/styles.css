@@ -18,3 +18,32 @@ body {
   max-width: 320px;
   margin-bottom: 16px;
 }
+input {
+  border-radius: 15px;
+  border-color: blue;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+img {
+  display: block;
+  width: 50px;
+  height: 50px;
+}
+p {
+  font-size: 20px;
+}
+.severalCountries-text {
+  font-weight: 500;
+}
+.country-box {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.country-text {
+  font-weight: 700;
+}

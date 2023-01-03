@@ -45,13 +45,15 @@ function onFetchError() {
 
 function createOneCountryMarkup(country) {
   const { name, capital, population, flags, languages } = country;
-  return `<div>
-      <img src="${flags.svg}" alt="flag ${name.official}" width = 50 />
+  return `<div class=country-box>
+      <img src="${flags.svg}" alt="flag ${name.official}"  />
       <h1>${name.common}</h1>
       </div>
-    <p><span>Capital:</span> ${capital}</p>
-    <p><span>Population:</span> ${population}</p>
-    <p><span>Languages:</span> ${Object.values(languages).join(', ')}</p>`;
+    <p><span class=country-text>Capital:</span> ${capital}</p>
+    <p><span class=country-text>Population:</span> ${population}</p>
+    <p><span class=country-text>Languages:</span> ${Object.values(
+      languages
+    ).join(', ')}</p>`;
 }
 
 function createSeveralCountriesMarkup(countries) {
@@ -59,9 +61,9 @@ function createSeveralCountriesMarkup(countries) {
     .map(
       ({ flags, name }) =>
         ` <li>
-      <div>
-        <img src="${flags.svg}" alt="flag ${name.official}" width = 50 />
-        <p>${name.common}</p>
+      <div class=country-box>
+        <img src="${flags.svg}" alt="flag ${name.official}"  />
+        <p class=severalCountries-text>${name.common}</p>
       </div>
     </li>`
     )
