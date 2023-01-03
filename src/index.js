@@ -1,32 +1,73 @@
 import './css/styles.css';
+import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
+import { fetchCountries } from './fetchCountries.js';
 
 const DEBOUNCE_DELAY = 300;
-
-// const BASE_URL = 'https://restcountries.com/v3.1';
-
-import fetchCountries from './fetchCountries.js';
-
-const inputEl = document.querySelector('input');
+const inputEl = document.querySelector('#search-box');
 const countryList = document.querySelector('.country-list');
 const countryInfo = document.querySelector('.country-info');
 
-fetchCountries().then(data => console.log(data));
+// fetchCountries().then(data => console.log(data));
 
-// fetchCountries().then(data => {
-//   createMarkup(data.250);
-// });
+inputEl.addEventListener('input', debounce(searchCountry, DEBOUNCE_DELAY));
 
-// function createMarkup(arr) {
-//   const markup = arr.map(({ name.official, capital, population, flags.svg, languages }) =>
+function searchCountry(e) {
+  const searchValue = e.target.value.trim();
+  console.log(searchValue);
+  if (!searchValue) return;
 
-//     `<div>
-//     <svg>${flags.svg}</svg>
-//     <h1>${name.official}</h1>
-//   </div>
-//     <p>Capital: ${capital}</p>
-//     <p>Population: ${population}</p>
-//     <p>Languages: ${languages}</p>`).join('');
+  countryList.innerHTML = '';
+  countryInfo.innerHTML = '';
 
-//   countryInfo.insertAdjacentHTML('beforeend', markup)
-// }
+  fetchCountries(searchValue).then(createMarkup).catch(onFetchError);
+}
+
+function createMarkup(data) {
+  if (data.length > 10) {
+    Notiflix.Notify.info(
+      'Too many matches found. Please enter a more specific name.'
+    );
+  }
+  if (data.length === 1) {
+    const markup = createOneCountryMarkup(data[0]);
+    addMarkup(markup, countryInfo);
+  }
+  if (data.length > 1 && data.length <= 10) {
+    const markup = createSeveralCountriesMarkup(data);
+    addMarkup(markup, countryList);
+  }
+}
+
+function onFetchError() {
+  Notiflix.Notify.failure('Oops, there is no country with that name');
+}
+
+function createOneCountryMarkup(country) {
+  const { name, capital, population, flags, languages } = country;
+  return `<div>
+      <img src="${flags.svg}" alt="flag ${name.official}" width = 50 />
+      <h1>${name.common}</h1>
+      </div>
+    <p><span>Capital:</span> ${capital}</p>
+    <p><span>Population:</span> ${population}</p>
+    <p><span>Languages:</span> ${Object.values(languages).join(', ')}</p>`;
+}
+
+function createSeveralCountriesMarkup(countries) {
+  return countries
+    .map(
+      ({ flags, name }) =>
+        ` <li>
+      <div>
+        <img src="${flags.svg}" alt="flag ${name.official}" width = 50 />
+        <p>${name.common}</p>
+      </div>
+    </li>`
+    )
+    .join('');
+}
+
+function addMarkup(markup, element) {
+  element.insertAdjacentHTML('beforeend', markup);
+}
